@@ -74,7 +74,7 @@ jobs:
         run: |
           & "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319\csc.exe" /nologo /codepage:65001 /target:winexe `
             /platform:anycpu /optimize+ /out:GBRemote.exe /r:System.Management.dll /r:System.Web.Extensions.dll `
-            /r:System.Windows.Forms.dll /r:System.Drawing.dll windows/GBRemote.cs
+            /r:System.Windows.Forms.dll /r:System.Drawing.dll windows\GBRemote.cs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
