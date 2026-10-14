@@ -1,5 +1,6 @@
 package com.gbcore.remote;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -40,9 +41,33 @@ final class Api {
                 text.write(buffer, 0, read);
             }
             in.close();
-            return new JSONObject(text.toString("UTF-8"));
+            try {
+                return new JSONObject(text.toString("UTF-8"));
+            } catch (JSONException error) {
+                throw new NotGbServer();
+            }
         } finally {
             connection.disconnect();
+        }
+    }
+
+    /**
+     * True when the address answers like the GB platform. Asked before sending any detail
+     * of the phone, so a wrong address never receives them.
+     */
+    static boolean isGb(String server) throws Exception {
+        try {
+            String error = post(server, "status", new JSONObject().put("device_code", "").put("secret", ""))
+                    .optString("error");
+            return "unknown_device".equals(error) || "too_many_requests".equals(error);
+        } catch (NotGbServer error) {
+            return false;
+        }
+    }
+
+    static final class NotGbServer extends Exception {
+        NotGbServer() {
+            super("La dirección configurada no es de GB.");
         }
     }
 }

@@ -14,11 +14,12 @@ android {
         applicationId 'com.gbcore.remote'
         minSdk 21          // Android 5.0: old phones too
         targetSdk 35
-        versionCode 1
-        versionName '0.1.0'
+        versionCode 3
+        versionName '0.1.2'
         // address of the platform baked in the app (GitHub variable GBREMOTE_SERVER), so the
-        // customer configures nothing; support can still change it with a long press on the title
-        buildConfigField 'String', 'DEFAULT_SERVER', "\"${System.getenv('GBREMOTE_SERVER') ?: 'https://soporte.gbcore.com'}\""
+        // customer configures nothing; support can still change it with a long press on the title.
+        // Never a domain that GB does not own: the app sends the details of the phone to it.
+        buildConfigField 'String', 'DEFAULT_SERVER', "\"${System.getenv('GBREMOTE_SERVER') ?: 'http://26.117.63.23:8069'}\""
     }
 
     buildFeatures {

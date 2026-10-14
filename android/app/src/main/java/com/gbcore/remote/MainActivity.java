@@ -201,6 +201,9 @@ public class MainActivity extends Activity {
         call("register", new Body() {
             @Override
             public JSONObject build() throws Exception {
+                if (!Api.isGb(store.server())) {
+                    throw new Api.NotGbServer();  // a wrong address never receives the details
+                }
                 return new JSONObject()
                         .put("company", ref)
                         .put("computer", DeviceInfo.name())
@@ -222,7 +225,9 @@ public class MainActivity extends Activity {
 
             @Override
             public void failed(Exception error) {
-                showAskCompany("No hay conexión con GB. Revise el internet.");
+                showAskCompany(error instanceof Api.NotGbServer
+                        ? "La dirección configurada no es de GB.\nLlame a soporte (no se envió nada)."
+                        : "No hay conexión con GB. Revise el internet.");
             }
         });
     }

@@ -67,7 +67,7 @@ jobs:
           GBREMOTE_SERVER: ${{ vars.GBREMOTE_SERVER }}
         run: |
           $source = Get-Content windows/GBRemote.cs -Raw -Encoding utf8
-          $source = $source.Replace('"https://soporte.gbcore.com"', '"' + $env:GBREMOTE_SERVER + '"')
+          $source = $source -replace 'DefaultServer = "[^"]*"', ('DefaultServer = "' + $env:GBREMOTE_SERVER + '"')
           [IO.File]::WriteAllText("$PWD/windows/GBRemote.cs", $source, [Text.UTF8Encoding]::new($false))
       - name: Build GBRemote.exe
         shell: pwsh

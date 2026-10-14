@@ -23,16 +23,18 @@ using Microsoft.Win32;
 
 [assembly: System.Reflection.AssemblyTitle("GB Remote")]
 [assembly: System.Reflection.AssemblyProduct("GB Remote")]
-[assembly: System.Reflection.AssemblyVersion("0.1.0.0")]
+[assembly: System.Reflection.AssemblyVersion("0.1.2.0")]
 
 namespace GBRemote
 {
     static class Program
     {
-        public const string Version = "0.1.0";
-        // Address of the GB platform. Can be changed with a file "servidor.txt"
-        // next to the program (one line, e.g. https://soporte.midominio.com).
-        public const string DefaultServer = "https://soporte.gbcore.com";
+        public const string Version = "0.1.2";
+        // Address of the GB platform (the CI replaces it with the GitHub variable
+        // GBREMOTE_SERVER). Can be changed with a file "servidor.txt" next to the
+        // program (one line). Never put here a domain that GB does not own: the app
+        // sends the details of the computer to it.
+        public const string DefaultServer = "http://26.117.63.23:8069";
 
         [STAThread]
         static void Main()
@@ -130,8 +132,34 @@ namespace GBRemote
                 using (var reader = new StreamReader(exc.Response.GetResponseStream(), Encoding.UTF8))
                     text = reader.ReadToEnd();
             }
-            return serializer.Deserialize<Dictionary<string, object>>(text);
+            try
+            {
+                var answer = serializer.Deserialize<Dictionary<string, object>>(text);
+                if (answer != null) return answer;
+            }
+            catch (ArgumentException) { }
+            catch (InvalidOperationException) { }
+            throw new NotGbServerException();
         }
+
+        /// <summary>True when the address answers like the GB platform. Asked before sending
+        /// any detail of the computer, so a wrong address never receives them.</summary>
+        public static bool IsGb(string server)
+        {
+            try
+            {
+                var answer = Post(server, "status", new Dictionary<string, object> { { "device_code", "" }, { "secret", "" } });
+                object error;
+                return answer.TryGetValue("error", out error)
+                    && (Convert.ToString(error) == "unknown_device" || Convert.ToString(error) == "too_many_requests");
+            }
+            catch (NotGbServerException) { return false; }
+        }
+    }
+
+    class NotGbServerException : Exception
+    {
+        public NotGbServerException() : base("La dirección configurada no es de GB.") { }
     }
 
     static class SystemDetails
@@ -298,7 +326,7 @@ namespace GBRemote
             message.Text = error ?? "Escriba el ID de su empresa\n(se lo da GB, por ejemplo: farmacia-moma)";
             message.ForeColor = error == null ? Color.White : Color.FromArgb(252, 165, 165);
             company.Visible = connect.Visible = true;
-            company.Text = settings.Company ?? "";
+            if (company.Text.Trim().Length == 0) company.Text = settings.Company ?? "";  // keep what was typed
             code.Visible = open.Visible = false;
             poll.Stop();
         }
@@ -328,6 +356,11 @@ namespace GBRemote
             Application.DoEvents();
             try
             {
+                if (!Api.IsGb(settings.Server))
+                {
+                    ShowAskCompany("La dirección configurada no es de GB.\nLlame a soporte (no se envió nada).");
+                    return;
+                }
                 var answer = Api.Post(settings.Server, "register", new Dictionary<string, object> {
                     { "company", ref_ }, { "computer", Environment.MachineName },
                     { "secret", settings.Secret }, { "info", SystemDetails.Collect() },
