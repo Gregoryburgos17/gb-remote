@@ -23,18 +23,18 @@ using Microsoft.Win32;
 
 [assembly: System.Reflection.AssemblyTitle("GB Remote")]
 [assembly: System.Reflection.AssemblyProduct("GB Remote")]
-[assembly: System.Reflection.AssemblyVersion("0.1.2.0")]
+[assembly: System.Reflection.AssemblyVersion("0.1.3.0")]
 
 namespace GBRemote
 {
     static class Program
     {
-        public const string Version = "0.1.2";
+        public const string Version = "0.1.3";
         // Address of the GB platform (the CI replaces it with the GitHub variable
         // GBREMOTE_SERVER). Can be changed with a file "servidor.txt" next to the
         // program (one line). Never put here a domain that GB does not own: the app
         // sends the details of the computer to it.
-        public const string DefaultServer = "http://26.117.63.23:8069";
+        public const string DefaultServer = "https://gb-core.tail5634e7.ts.net";
 
         [STAThread]
         static void Main()
@@ -70,7 +70,8 @@ namespace GBRemote
                 {
                     var data = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(File.ReadAllText(FilePath));
                     string value;
-                    if (data.TryGetValue("server", out value)) settings.Server = value;
+                    // the server is not read from here: a new version of the app must be able to
+                    // move every computer to a new address
                     if (data.TryGetValue("company", out value)) settings.Company = value;
                     if (data.TryGetValue("device_code", out value)) settings.DeviceCode = value;
                     if (data.TryGetValue("secret", out value)) settings.Secret = value;
@@ -84,7 +85,12 @@ namespace GBRemote
                 if (line.Length > 0) settings.Server = line;
             }
             if (string.IsNullOrEmpty(settings.Server)) settings.Server = Program.DefaultServer;
-            if (string.IsNullOrEmpty(settings.Secret)) settings.Secret = NewSecret();
+            if (string.IsNullOrEmpty(settings.Secret))
+            {
+                settings.Secret = NewSecret();
+                try { settings.Save(); }  // the secret is the identity of this computer: never lose it
+                catch (Exception) { }
+            }
             return settings;
         }
 
@@ -92,7 +98,7 @@ namespace GBRemote
         {
             Directory.CreateDirectory(Folder);
             var data = new Dictionary<string, string> {
-                { "server", Server }, { "company", Company ?? "" },
+                { "company", Company ?? "" },
                 { "device_code", DeviceCode ?? "" }, { "secret", Secret },
             };
             File.WriteAllText(FilePath, new JavaScriptSerializer().Serialize(data));
