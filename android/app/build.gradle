@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing comes from environment variables (GitHub secrets in the workflow).
+// Without them the build is signed with the debug key, which is enough to install it.
+def keystorePath = System.getenv('GBREMOTE_KEYSTORE')
+
+android {
+    namespace 'com.gbcore.remote'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.gbcore.remote'
+        minSdk 21          // Android 5.0: old phones too
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+        // address of the platform baked in the app (GitHub variable GBREMOTE_SERVER), so the
+        // customer configures nothing; support can still change it with a long press on the title
+        buildConfigField 'String', 'DEFAULT_SERVER', "\"${System.getenv('GBREMOTE_SERVER') ?: 'https://soporte.gbcore.com'}\""
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePath) {
+                storeFile file(keystorePath)
+                storePassword System.getenv('GBREMOTE_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('GBREMOTE_KEY_ALIAS')
+                keyPassword System.getenv('GBREMOTE_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig keystorePath ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    lint {
+        // the APK is built in CI without a person to read the report: warn, never block
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}

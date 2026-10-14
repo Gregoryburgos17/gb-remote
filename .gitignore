@@ -1,0 +1,11 @@
+# builds (published by GitHub Actions in Releases, never committed)
+*.exe
+*.apk
+*.jks
+*.keystore
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.iml
