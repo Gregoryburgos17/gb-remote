@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "version": "0.7.5",
+  "channel": "preview",
+  "platform": "android",
+  "package": "com.gbcore.remote.offline",
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "signed": true,
+  "certificate_sha256": "f639d354a30e4fdb6943e01c720e861f90af48824cd19c69eb912011d2775930",
+  "installer": "GBRemote-0.7.5-preview.apk",
+  "url": "https://github.com/Gregoryburgos17/gb-remote/releases/download/kotlin-v0.7.5-preview/GBRemote-0.7.5-preview.apk",
+  "sha256": "11b12205b6eaa3f6b65e71371b6aeb4b90bd1023e0164ce9b415dc9a5e540add",
+  "size": 113906758,
+  "source_repository": "Gregoryburgos17/gb-erp",
+  "source_commit": "dcecca0e92d007d6d1e862251ba2648085384578",
+  "server_addon": "gb_remote_offline",
+  "server_addon_version": "20.0.0.6.0",
+  "native_sync_protocol": 1,
+  "functional_tests_run": false,
+  "automatic_sync_scope": "foreground"
+}
