@@ -1,22 +1,27 @@
 {
   "schema": 1,
-  "version": "0.7.5",
+  "version": "0.7.6",
   "channel": "preview",
   "platform": "windows-x64",
   "signed": false,
-  "installer": "GBRemote-0.7.5-unsigned.exe",
-  "url": "https://github.com/Gregoryburgos17/gb-remote/releases/download/kotlin-v0.7.5-preview/GBRemote-0.7.5-unsigned.exe",
-  "sha256": "be1d9c8e6d10b967a8b291f60b9106f6d593b91038d8530b0dac250bd0733e2a",
-  "size": 174969856,
+  "installer": "GBRemote-0.7.6-unsigned.exe",
+  "url": "https://github.com/Gregoryburgos17/gb-remote/releases/download/kotlin-v0.7.6-preview/GBRemote-0.7.6-unsigned.exe",
+  "sha256": "7e7f2598c05aa0b70cf0a35b10f12efd6396b1ad0c75515a4359e5b9a4684805",
+  "size": 175129600,
   "source_repository": "Gregoryburgos17/gb-erp",
-  "source_commit": "dcecca0e92d007d6d1e862251ba2648085384578",
+  "source_commit": "f020e8e0df4de2a7709110d491a1cdd0d238e3ec",
   "server_addon": "gb_remote_offline",
-  "server_addon_version": "20.0.0.6.0",
+  "server_addon_version": "20.0.0.7.0",
   "native_sync_protocol": 1,
   "functional_tests_run": false,
+  "native_adapters": {
+    "gb_school_private_workspace": 1
+  },
   "server_addons": {
-    "gb_remote_offline": "20.0.0.6.0",
-    "gb_saas_master": "20.0.1.7.2",
-    "gb_saas_tenant": "20.0.1.1.1"
+    "gb_remote_offline": "20.0.0.7.0",
+    "gb_saas_master": "20.0.1.7.3",
+    "gb_saas_tenant": "20.0.1.1.1",
+    "gb_saas_router": "20.0.1.1.2",
+    "gb_remote_platform": "20.0.1.1.0"
   }
 }
