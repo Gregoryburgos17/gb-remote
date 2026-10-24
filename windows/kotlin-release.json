@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "version": "0.7.3",
+  "channel": "preview",
+  "platform": "windows-x64",
+  "signed": false,
+  "installer": "GBRemote-0.7.3-unsigned.exe",
+  "url": "https://github.com/Gregoryburgos17/gb-remote/releases/download/kotlin-v0.7.3-preview/GBRemote-0.7.3-unsigned.exe",
+  "sha256": "8f16a732fbf52d123f1a14f5a73c0b6c5ac3e776e60f383b4cfaa3f163d06d2b",
+  "size": 174883840,
+  "source_repository": "Gregoryburgos17/gb-erp",
+  "source_commit": "8c02e36",
+  "server_addon": "gb_remote_offline",
+  "server_addon_version": "20.0.0.5.1",
+  "native_sync_protocol": 1,
+  "functional_tests_run": false
+}

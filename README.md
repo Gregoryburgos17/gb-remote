@@ -1,78 +1,45 @@
-# GB Remote
+# GBRemote · Kotlin + SQLite
 
-Conecte su computadora o su teléfono con su sistema GB, sin configurar nada.
+Cliente nativo de GB ERP para trabajar con una copia local de los datos permitidos de cada usuario.
 
-## Descargar
+## Descargar Windows
 
-| Equipo | Descarga |
-|---|---|
-| Windows 8, 8.1, 10 y 11 | [GBRemote.exe](../../releases/latest/download/GBRemote.exe) |
-| Android 5 o más nuevo | [GBRemote.apk](../../releases/latest/download/GBRemote.apk) |
+**[Instalar GBRemote 0.7.3 para Windows x64](https://github.com/Gregoryburgos17/gb-remote/releases/download/kotlin-v0.7.3-preview/GBRemote-0.7.3-unsigned.exe)**
 
-No hace falta instalar nada más. En Windows, el programa es un solo archivo: guárdelo en el
-Escritorio y ábralo. En Android, al abrir el archivo el teléfono pide permiso para
-"instalar apps de origen desconocido": acéptelo una vez.
+[Ver publicación, huella SHA-256 e información de firma](https://github.com/Gregoryburgos17/gb-remote/releases/tag/kotlin-v0.7.3-preview).
 
-## Cómo se usa
+Esta es una versión preliminar **sin firma pública**. El instalador fue compilado y empaquetado; la validación funcional corresponde al propietario. No se ejecutaron pruebas ni se inició la aplicación para esta publicación.
 
-1. Abra **GB Remote**.
-2. Escriba el **ID de su empresa** (se lo da GB, por ejemplo `farmacia-moma`) y toque **Conectar**.
-3. Aparece un **código de 9 números**. GB revisa la solicitud y la **acepta**. Si le llaman, diga ese código.
-4. Cuando diga **Conectado**, toque **Abrir mi sistema**.
+## Uso
 
-La próxima vez que abra GB Remote ya estará conectado: solo toque **Abrir mi sistema**.
+1. Instale el EXE. La ventana debe mostrar **GBRemote · 0.7.3 · Kotlin**.
+2. Entre con su usuario y contraseña de GB ERP y cree un PIN para abrir su copia local.
+3. La plataforma resuelve la empresa: no se introduce URL ni nombre de base de datos.
+4. Abra las aplicaciones autorizadas de su cuenta desde el menú original de GB ERP.
+5. Pulse **Sincronizar** para el modo manual. En el pie o menú de usuario, elija **Configurar sincronización** para activar el modo automático y su intervalo.
 
-Si GB rechaza o desconecta el equipo, la app lo dice y vuelve a pedir el ID de la empresa.
+Los cambios se guardan primero en este equipo. La aplicación conserva los pendientes durante una caída de conexión y los identifica hasta recibir respuesta del servidor. Los datos y claves se mantienen separados por cuenta.
 
-## Qué datos envía
+## Qué incluye 0.7.3
 
-Para que soporte sepa qué equipo pide entrar y pueda ayudarle, la app envía junto con la
-solicitud: sistema operativo y versión, memoria, disco, procesador, navegadores instalados,
-impresoras (Windows), tamaño de pantalla, idioma y zona horaria. No envía archivos, fotos,
-contactos, contraseñas ni nada de lo que usted escribe.
+- Iconos originales y navegación por secciones y subgrupos de las aplicaciones autorizadas.
+- Listas y formularios nativos a partir de los campos y vistas del usuario.
+- Avatares, actividades, búsqueda local y paginación.
+- Sincronización manual o automática cada 2, 5, 15 o 30 minutos, con pausa durante la edición y reintentos espaciados ante fallos.
+- Estados diferenciados de última descarga, último intento y sincronización completa.
 
-El equipo se identifica con una clave secreta que se crea en el propio equipo. GB solo guarda
-una huella de esa clave, nunca la clave.
+El cliente utiliza Kotlin, Compose y SQLite. No incluye un servidor Odoo ni instala Python o PostgreSQL en el equipo del empleado.
 
----
+## Actualización necesaria en GB ERP
 
-## Para soporte (GB)
+Para recibir la cola genérica, el servidor debe cargar **gb_remote_offline 20.0.0.5.1**, publicar `/gb_remote/v1/erp/catalog` y `/gb_remote/v1/erp/push` y anunciar `native_sync.protocol=1`.
 
-- Las solicitudes llegan a **GB Core > Soporte > Monitoreo > Dispositivos (GB Remote)**, con
-  los detalles del equipo y los botones **Aceptar**, **Rechazar** y **Desconectar**.
-- Servidor: módulo `gb_remote` (repositorio gb-erp), API `POST /gb_remote/api/v1/register` y
-  `/status`, con límite de solicitudes por dirección.
-- Cambiar la dirección de la plataforma sin recompilar:
-  - Windows: un archivo `servidor.txt` junto a `GBRemote.exe` con la dirección en una línea.
-  - Android: mantener presionado el título **GB Remote**.
+El [módulo y la guía de actualización están en gb-erp](https://github.com/Gregoryburgos17/gb-erp/tree/main/addons/gb_remote_offline) (repositorio privado). Subir el código a GitHub no lo despliega en el servidor. Si falta esa API, GBRemote mantiene la cola en el dispositivo y lo informa.
 
-### Compilar
+## Alcance actual
 
-Cada push a `main` compila las dos apps en GitHub Actions; una etiqueta `v*` (por ejemplo
-`v0.1.0`) además publica la versión en *Releases*, que es lo que enlazan las descargas de arriba.
+Esta versión todavía requiere adaptadores Kotlin para acciones especiales, asistentes, métodos de botones, pagos, confirmaciones y edición de líneas x2many. Mostrar el icono de una aplicación no significa que todos sus procesos estén implementados.
 
-En **Settings > Secrets and variables > Actions**:
+El cliente Kotlin actual todavía no tiene APK. Los archivos `windows/GBRemote.cs`, `android/` y su workflow corresponden al cliente de conexión anterior; no producen este instalador 0.7.3. La fuente actual está en [gb-erp/clients/gbremote](https://github.com/Gregoryburgos17/gb-erp/tree/main/clients/gbremote).
 
-| Nombre | Tipo | Para qué |
-|---|---|---|
-| `GBREMOTE_SERVER` | variable | Dirección de la plataforma que queda dentro de las apps (ej. `https://soporte.midominio.com`) |
-| `GBREMOTE_KEYSTORE_BASE64` | secreto | Llave de firma Android (`base64 -w0 gbremote.jks`) |
-| `GBREMOTE_KEYSTORE_PASSWORD`, `GBREMOTE_KEY_ALIAS`, `GBREMOTE_KEY_PASSWORD` | secretos | Datos de esa llave |
-
-Sin la llave, la APK se firma con una llave temporal: se instala bien, pero una versión nueva no
-se puede instalar encima de la anterior (hay que desinstalar primero). Cree la llave una vez y
-guárdela fuera del repositorio:
-
-```sh
-keytool -genkeypair -v -keystore gbremote.jks -alias gbremote -keyalg RSA -keysize 2048 -validity 10000
-```
-
-Compilar Windows en local (no requiere instalar nada: `csc.exe` viene con Windows):
-
-```bat
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /codepage:65001 /target:winexe /optimize+ ^
-  /out:GBRemote.exe /r:System.Management.dll /r:System.Web.Extensions.dll ^
-  /r:System.Windows.Forms.dll /r:System.Drawing.dll windows\GBRemote.cs
-```
-
-Android en local: JDK 17 y Android SDK 35, luego `gradle assembleRelease` dentro de `android/`.
+Los instaladores se distribuyen como archivos de Releases. `windows/kotlin-release.json` identifica la descarga vigente de esta vista previa; no constituye un actualizador automático del programa.
